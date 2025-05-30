@@ -84,11 +84,15 @@ public class FCMPlugin extends CordovaPlugin {
             } else if (action.equals("startJsEventBridge")) {
                 this.jsEventBridgeCallbackContext = callbackContext;
             } else if (action.equals("getToken")) {
-                cordova.getActivity().runOnUiThread(new Runnable() {
-                    public void run() {
-                        getToken(callbackContext);
-                    }
-                });
+                try {
+                    cordova.getActivity().runOnUiThread(new Runnable() {
+                        public void run() {
+                            getToken(callbackContext);
+                        }
+                    });
+                } catch (java.lang.Exception e) {
+                    callbackContext.error(e.getMessage());
+                }
             } else if (action.equals("getInitialPushPayload")) {
                 cordova.getActivity().runOnUiThread(new Runnable() {
                     public void run() {
@@ -182,15 +186,20 @@ public class FCMPlugin extends CordovaPlugin {
             FirebaseMessaging.getInstance().getToken().addOnCompleteListener(new OnCompleteListener<String>() {
 				@Override
 				public void onComplete(@NonNull Task<String> task) {
-					if (!task.isSuccessful()) {
-						Log.w(TAG, "Fetching FCM registration token failed", task.getException());
-						return;
-					}
-					// Get new FCM registration token
-					String token = task.getResult();
-					System.out.println("token value is: " + token);
-                    callback.success(token);
-					cordova.getActivity().startService(new Intent(cordova.getActivity().getApplicationContext(), MyFirebaseMessagingService.class));
+                    try {
+                        if (!task.isSuccessful()) {
+                            callback.error("FCM task is unsuccessfullllll");
+                            Log.w(TAG, "Fetching FCM registration token failed", task.getException());
+                            return;
+                        }
+                        // Get new FCM registration token
+                        String token = task.getResult();
+                        System.out.println("token value is: " + token);
+                        callback.success(token);
+                    } catch (java.lang.Exception e) {
+                        callback.error(e.getMessage());
+                    }
+                    cordova.getActivity().startService(new Intent(cordova.getActivity().getApplicationContext(), MyFirebaseMessagingService.class));
 				}
 			});
         } catch (Exception e) {
@@ -239,17 +248,21 @@ public class FCMPlugin extends CordovaPlugin {
     }
 
     public void getToken(final CallbackContext callbackContext) {
-        this.getToken(new TokenListeners<String, JSONObject>() {
-            @Override
-            public void success(String message) {
-                callbackContext.success(message);
-            }
+        try {
+            this.getToken(new TokenListeners<String, JSONObject>() {
+                @Override
+                public void success(String message) {
+                    callbackContext.success(message);
+                }
 
-            @Override
-            public void error(JSONObject message) {
-                callbackContext.error(message);
-            }
-        });
+                @Override
+                public void error(JSONObject message) {
+                    callbackContext.error(message);
+                }
+            });
+        } catch (java.lang.Exception e) {
+            callbackContext.error(e.getMessage());
+        }
     }
 
     private static void dispatchJSEvent(String eventName, String stringifiedJSONValue) throws Exception {
