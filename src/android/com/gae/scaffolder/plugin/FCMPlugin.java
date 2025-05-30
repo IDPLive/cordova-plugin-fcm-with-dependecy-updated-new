@@ -91,7 +91,7 @@ public class FCMPlugin extends CordovaPlugin {
                         }
                     });
                 } catch (java.lang.Exception e) {
-                    callbackContext.error(e.getMessage());
+                    callbackContext.error(e);
                 }
             } else if (action.equals("getInitialPushPayload")) {
                 cordova.getActivity().runOnUiThread(new Runnable() {
@@ -197,7 +197,7 @@ public class FCMPlugin extends CordovaPlugin {
                         System.out.println("token value is: " + token);
                         callback.success(token);
                     } catch (java.lang.Exception e) {
-                        callback.error(e.getMessage());
+                        callback.error(e);
                     }
                     cordova.getActivity().startService(new Intent(cordova.getActivity().getApplicationContext(), MyFirebaseMessagingService.class));
 				}
@@ -261,7 +261,7 @@ public class FCMPlugin extends CordovaPlugin {
                 }
             });
         } catch (java.lang.Exception e) {
-            callbackContext.error(e.getMessage());
+            callbackContext.error(e);
         }
     }
 
