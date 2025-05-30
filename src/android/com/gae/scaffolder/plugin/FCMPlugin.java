@@ -188,7 +188,6 @@ public class FCMPlugin extends CordovaPlugin {
 				public void onComplete(@NonNull Task<String> task) {
                     try {
                         if (!task.isSuccessful()) {
-                            callback.error("FCM task is unsuccessfullllll");
                             Log.w(TAG, "Fetching FCM registration token failed", task.getException());
                             return;
                         }
